@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/JoseLeonTM/jquery-exercises#readme",
   "devDependencies": {
+    "@types/jquery": "^2.0.46",
     "gulp": "^3.9.1",
     "gulp-sass": "^3.1.0",
     "gulp-typescript": "^3.1.6",
