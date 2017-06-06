@@ -1,0 +1,32 @@
+body {
+  width: 90%;
+  margin: 30px auto;
+  font-family: Arial;
+  font-size: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
+
+nav {
+  border-bottom: 2px solid blue; }
+  nav a {
+    text-decoration: none;
+    color: blue;
+    display: inline-block;
+    padding: 10px;
+    margin: 10px;
+    background-color: white;
+    border: 1px solid #e8e8e8;
+    border-radius: 5px; }
+    nav a:hover {
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
+  nav .selected {
+    background-color: #e8e8e8; }
+
+#container {
+  padding: 10px; }
+  #container article {
+    height: 100px;
+    padding: 20px;
+    border: 1px solid blue;
+    margin: 5px; }
+  #container .hide {
+    display: none; }
