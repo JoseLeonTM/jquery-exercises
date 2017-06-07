@@ -1,0 +1,23 @@
+
+body{
+  width:90%;
+  margin: 20px auto;
+  background-color: #bb4f4c;
+}
+#container{
+  background-color: white;
+}
+table{
+  border-collapse: collapse;
+  font-family: Arial;
+  width:100%;
+  tr{
+    th{
+      font-size: 20px;
+      border:1px solid blue;
+    }
+    td{
+      border:1px solid blue;
+    }
+  }
+}
