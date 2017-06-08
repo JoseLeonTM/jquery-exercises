@@ -1,26 +1,36 @@
-var tableBody = $('tbody');
-var data = json();
-// var result = $.ajax({
+// $.ajax({
 //     method:'GET',
-//     headers:{
-//         // "Accept":"*",
-//         // "Access-Control-Request-Headers":"http://www.bbc.co.uk"
-//         "Access-Control-Allow-Origin":'*'
-//     },
-//     scriptCharset:'utf-8',
-//     crossDomain:true,
-//     url: 'http://www.bbc.co.uk/radio1/playlist.json'
-//     }).then(function(res){
+//     url: 'http://www.bbc.co.uk/radio1/playlist.json',
+// headers:{
+// "Accept":"*",
+// "Access-Control-Request-Headers":"http://www.bbc.co.uk"
+// "Access-Control-Allow-Origin":'*'
+// },
+// dataType:'jsonp',
+// data:{
+//     // q:'*',
+//     format:'json'
+// },
+// jsonp:false,
+// jsonpCallback:'getData',
+// success:function(res){
+//     console.log(res);
+//     top10 = trimData(res);
+//     fillTable(top10);
+// },
+// error:function(er){
+//     console.log("Error: ",er.status);
+// }
+// });
+//     .then(function(res){
 //     console.log("response: ",res);
 // },function(er){
-//     console.log("Error: ",er);
+//     console.log("Error: ",er.status);
 // });
-/////SEND TO http://www.bbc.co.uk/radio1/artist/id
-// console.log(data);
 function trimData(data) {
     return data.playlist.a.slice(0, 10);
 }
-function createRow(data) {
+function createRow(data, index) {
     //CREATE THE ELEMENTS
     var row = document.createElement('tr');
     var title = document.createElement('td');
@@ -35,10 +45,10 @@ function createRow(data) {
     title.innerText = data.title;
     artist.innerText = data.artist;
     label.innerText = data.label;
-    img.innerHTML = "<img width='100%' src=" + data.image + "/>";
+    img.innerHTML = "<img height='60px' src='" + data.image + "'/>";
     playlist.innerText = data.playlist;
     status.innerText = data.status;
-    edit.innerHTML = "<button>Edit</button>";
+    edit.innerHTML = "<button id=" + index + ">Edit</button>";
     ////////APPEND THE CELLS INTO THE ROW
     row.appendChild(title);
     row.appendChild(artist);
@@ -49,17 +59,82 @@ function createRow(data) {
     row.appendChild(edit);
     return row;
 }
+function saveData(ev) {
+    var index = ev.target.className;
+    var row = $(tableBody[0].children[index])[0].children;
+    var inputs = $('input');
+    // var data = top10[ev.target.className];
+    // console.log(inputs);
+    for (let i = 0; i < inputs.length; i++) {
+        if (i == 3) {
+            row[i].innerHTML = "<img height='60px' src='" + inputs[i].value + "'/>";
+        }
+        else {
+            row[i].innerText = inputs[i].value;
+        }
+    }
+    top10[index].title = inputs[0].value;
+    top10[index].artist = inputs[1].value;
+    top10[index].label = inputs[2].value;
+    top10[index].image = inputs[3].value;
+    top10[index].playlist = inputs[4].value;
+    top10[index].status = inputs[5].value;
+    var modal = $('#modal');
+    modal.detach();
+    ev.preventDefault();
+    $.ajax({
+        method: 'POST',
+        data: data,
+        url: 'http://www.bbc.co.uk/radio1/artist/id'
+    }).then(function (res) {
+        console.log("response: ", res);
+    }, function (er) {
+        console.log("Error: ", er);
+    });
+}
+function closeModal() {
+    var modal = $('#modal');
+    modal.detach();
+}
 function editable(ev) {
-    var row = $(ev.target.parentNode.parentNode);
-    console.log(row);
+    var row = ev.target.id;
+    var d = top10[row];
+    var modal = document.createElement('div');
+    modal.id = 'modal';
+    modal.innerHTML = [
+        '<form>',
+        '<div><label for="title">Title:</label>',
+        '<input type="text" id="title" value="' + d.title + '" required/></div>',
+        '<div><label for="artist">Artist:</label>',
+        '<input type="text" id="artist" value="' + d.artist + '" required/></div>',
+        '<div><label for="label">Label:</label>',
+        '<input type="text" id="label" value="' + d.label + '" required/></div>',
+        '<div><label for="img">Image:</label>',
+        '<input type="url" id="img" value="' + d.image + '" required/></div>',
+        '<div><label for="playlist">Playlist:</label>',
+        '<input type="text" id="playlist" value="' + d.playlist + '" required/></div>',
+        '<div><label for="status">Status:</label>',
+        '<input type="text" id="status" value="' + d.status + '" required/></div>',
+        '<button id="save" class="' + row + '">Save</button>',
+        '<p id="close">X</p>',
+        '</form>'
+    ].join('');
+    container.append($(modal));
+    var save = $('#save');
+    save.on('click', saveData);
+    var p = $('#close');
+    p.on('click', closeModal);
 }
 function fillTable(data) {
     for (let i = 0; i < data.length; i++) {
-        tableBody.append(createRow(data[i]));
+        tableBody.append(createRow(data[i], i));
     }
     var buttons = $('button');
     buttons.on('click', editable);
 }
+var container = $('#container');
+var tableBody = $('tbody');
+var data = json();
 var top10 = trimData(data);
 fillTable(top10);
 function json() {
